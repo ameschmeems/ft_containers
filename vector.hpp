@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/29 11:53:51 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/05/30 15:40:46 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/05/31 12:48:34 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,31 +18,6 @@
 
 namespace ft
 {
-	//allows for iterating at any point of the container
-	template<typename T>
-	class random_access_iterator : public ft::iterator<ft::random_access_iterator_tag, T>
-	{
-	public:
-
-		//default constructor
-		random_access_iterator(void) : _element(nullptr) {}
-		//copy constructor
-		random_access_iterator(const random_access_iterator &copy) : _element(copy._element) {}
-		//default destructor
-		~random_access_iterator(void) {}
-		//copy assignment operator
-		random_access_iterator &operator=(const random_access_iterator &it)
-		{
-			this->_element = it.element;
-			return (*this);
-		}
-
-	private:
-
-		//element pointed to by iterator
-		pointer _element;
-	};
-
 	template<typename T, typename Alloc = std::allocator<T> >
 	class vector
 	{
@@ -61,7 +36,7 @@ namespace ft
 		explicit vector(const allocator_type &alloc = allocator_type());
 		//fills n elements with value val
 		explicit vector(size_type n, const value_type &val = value_type(), \
-			const allocator__type &alloc = allocator_type());
+			const allocator_type &alloc = allocator_type());
 	};
 }
 

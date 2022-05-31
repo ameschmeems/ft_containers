@@ -8,6 +8,9 @@ CC		:=	c++
 
 CFLAGS	:=	-Wall -Wextra -Werror -std=c++98
 
+%.o:		%.c
+		${CC} ${CFLAGS} $< -o $@
+
 all:		${NAME}
 
 ${NAME}:	${OBJS}
