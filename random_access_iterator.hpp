@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/31 11:37:26 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/05/31 15:02:06 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/05/31 15:04:16 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,11 @@ namespace ft
 	{
 	public:
 
-		typedef typename ft::iterator<ft::random_access_iterator_tag, T>::iterator_category value_type;
-		typedef typename ft::iterator<ft::random_access_iterator_tag, T>::difference_type difference_type;
 		typedef typename ft::iterator<ft::random_access_iterator_tag, T>::value_type value_type;
-		typedef T* pointer;
-		typedef T& reference;
+		typedef typename ft::iterator<ft::random_access_iterator_tag, T>::difference_type difference_type;
+		typedef typename ft::iterator<ft::random_access_iterator_tag, T>::pointer pointer;
+		typedef typename ft::iterator<ft::random_access_iterator_tag, T>::reference reference;
+		typedef typename ft::iterator<ft::random_access_iterator_tag, T>::iterator_category iterator_category;
 
 		//default constructor
 		random_access_iterator(void) : _element(NULL) {}

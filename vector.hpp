@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/29 11:53:51 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/05/31 12:48:34 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/05/31 15:07:19 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include <memory>
 #include "utils.hpp"
+#include "random_access_iterator.hpp"
 
 namespace ft
 {
@@ -29,6 +30,7 @@ namespace ft
 		typedef typename allocator_type::const_reference const_reference;
 		typedef typename allocator_type::pointer pointer;
 		typedef typename allocator_type::const_pointer const_pointer;
+		typedef typename ft::random_access_iterator<T> iterator;
 		typedef typename allocator_type::size_type size_type;
 
 		//constructors to be implemented
