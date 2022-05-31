@@ -25,13 +25,22 @@ namespace ft
 	public:
 
 		//default constructor
-		random_access_iterator(void);
+		random_access_iterator(void) : _element(nullptr) {}
 		//copy constructor
-		random_access_iterator(const random_access_iterator &copy);
+		random_access_iterator(const random_access_iterator &copy) : _element(copy._element) {}
 		//default destructor
-		~random_access_iterator(void);
+		~random_access_iterator(void) {}
 		//copy assignment operator
-		random_access_iterator &operator=(const random_access_iterator &it);
+		random_access_iterator &operator=(const random_access_iterator &it)
+		{
+			this->_element = it.element;
+			return (*this);
+		}
+
+	private:
+
+		//element pointed to by iterator
+		pointer _element;
 	};
 
 	template<typename T, typename Alloc = std::allocator<T> >
