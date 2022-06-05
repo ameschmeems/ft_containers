@@ -31,6 +31,7 @@ namespace ft
 		typedef typename allocator_type::pointer pointer;
 		typedef typename allocator_type::const_pointer const_pointer;
 		typedef typename ft::random_access_iterator<T> iterator;
+		typedef typename ft::random_access_iterator<const T> const_iterataor;
 		typedef typename allocator_type::size_type size_type;
 
 		//constructors to be implemented
