@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/29 11:53:51 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/05/31 15:07:19 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/06/08 14:09:12 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,9 @@ namespace ft
 		typedef typename allocator_type::pointer pointer;
 		typedef typename allocator_type::const_pointer const_pointer;
 		typedef typename ft::random_access_iterator<T> iterator;
-		typedef typename ft::random_access_iterator<const T> const_iterataor;
+		typedef typename ft::random_access_iterator<const T> const_iterator;
+		typedef typename ft::reverse_iterator<iterator> reverse_iterator;
+		typedef typename ft::reverse_iterator<const_iterator> const_reverse_iterator;
 		typedef typename allocator_type::size_type size_type;
 
 		//constructors to be implemented
