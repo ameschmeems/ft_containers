@@ -322,6 +322,164 @@ namespace ft
 			}
 		}
 
+		//add new element at the end of vector
+		void push_back(const value_type &val)
+		{
+			if (this->_end == this->_capacity)
+			{
+				int new_capacity;
+				if (this->size() == 0)
+					new_capacity = 1;
+				else
+					new_capacity = this->size() * 2;
+				this->reserve(new_capacity);
+			}
+			this->_alloc.construct(this->_end, val);
+			this->_end++;
+		}
+
+		//remove element from the back
+		void pop_back(void)
+		{
+			this->_alloc.destroy(&(this->back()));
+			this->_end--;
+		}
+
+		//inserts element val at speciied position, moving the next elements
+		iterator insert(iterator position, const value_type &val)
+		{
+			size_type pos = &(*position) - this->_start;
+			if (size_type(this->_capacity - this->_end) >= this->size() + 1)
+			{
+				for (size_type i = 0; i < pos; i++)
+					this->_alloc.construct(this->_end - i, *(this->_end - i - 1));
+				this->_end++;
+				this->_alloc.construct(&(*position), val);
+			}
+			else
+			{
+				int new_capacity;
+				if (this->size() == 0)
+					new_capacity = 1;
+				else
+					new_capacity = this->size() * 2;
+				pointer new_start = this->_alloc.allocate(new_capacity);
+				pointer new_end = new_start + this->size() + 1;
+				pointer new_capacity_ptr = new_start + new_capacity;
+				for (size_type i = 0; i < pos; i++)
+					this->_alloc.construct(new_start + i, *(this->_start + i));
+				this->_alloc.construct(new_start + pos, val);
+				for (size_type j = 0; j < this->size() - pos; j++)
+					this->_alloc.construct(new_end - j - 1, *(this->_end - j - 1));
+				for (size_type k = 0; k < this->size(); k++)
+					this->_alloc.destroy(this->_start + k);
+				if (this->_start)
+					this->_alloc.deallocate(this->_start, this->capacity());
+				this->_start = new_start;
+				this->_end = new_end;
+				this->_capacity = new_capacity_ptr;
+			}
+			return (iterator(this->_start + pos));
+		}
+
+		//insert n elements of value val, at specified position
+		void insert(iterator position, size_type n, const value_type &val)
+		{
+			if (n == 0)
+				return ;
+			if (n > this->max_size())
+				throw std::length_error("vector::insert");
+			size_type pos = &(*position) - this->_start;
+			if (size_type(this->_capacity - this->_end) >= n)
+			{
+				for (size_type i = 0; i < this->size() - pos; i++)
+					this->_alloc.construct(this->_end - i + (n - 1), *(this->_end - i - 1))
+				this->_end += n;
+				while (n)
+				{
+					this->_alloc.construct(&(*position) + (n - 1), val);
+					n--;
+				}
+			}
+			else
+			{
+				int new_capacity;
+				if (this->size() == 0)
+					new_capacity = 0;
+				else
+					new_capacity = this->size() * 2;
+				pointer new_start = this->_alloc.allocate(new_capacity);
+				pointer new_capacity_ptr = new_start + new_capacity;
+				pointer new_end = pointer();
+				if (size_type(new_capacity_ptr - new_start) < this->size() + n)
+				{
+					if (new_start)
+						this->_alloc.deallocate(new_start, new_capacity_ptr - new_start);
+					new_capacity = this->size() + n;
+					new_start = this->_alloc.allocate(new_capacity);
+					new_capacity_ptr = new_start + next_capacity;
+				}
+				new_end = new_start + this->size() + n;
+				for (int i = 0; i < (&(*position) - this->_start); i++)
+					this->_alloc.construct(new_start + i, *(this->_start + i));
+				for (size_type j = 0; j < n; j++)
+					this->_alloc.construct(new_start + pos + j, val);
+				for (size_type k = 0; j < (this->size() - pos); j++)
+					this->_alloc.construct(new_end - j - 1, *(this->_end - j - 1));
+				for (size_type l = 0; l < this->size(); l++)
+					this->_alloc.destroy(this->_start + l);
+				this->_alloc.deallocate(this->_start, this->capacity());
+				this->_start = new_start;
+				this->_end = new_end;
+				this->_capacity = new_capacity_ptr;
+			}
+		}
+
+		//insert elements between first and last, starting at specified position
+		template<class InputIterator>
+		void insert(iterator position, InputIterator first, InputIterator last)
+		{
+			size_type n = ft::distance(first, last);
+			if (size_type(this->_capacity - this->_end) >= n)
+			{
+				for (size_type i = 0; i < (this->size() - &(*position) - this->_start); i++)
+					this->_alloc.construct(this->_end - i + n - 1, *(this->_end - i - 1));
+				this->_end += n;
+				while (first != last)
+				{
+					this->_alloc.construct(&(*position), *first);
+					first++;
+					position++;
+				}
+			}
+			else
+			{
+				pointer new_start = this->_alloc.allocate(this->size() * 2);
+				pointer new_end = new_start + this->size() + n;
+				pointer new_capacity = new_start + (this->size() * 2);
+				if (size_type(new_capacity - new_start) < this->size() + n)
+				{
+					if (new_start)
+						this->_alloc.deallocate(new_start, new_capacity - new_start);
+					new_start = this->_alloc.allocate(this->size() + n);
+					new_end = new_start + this->size() + n;
+					new_capacity = new_end;
+				}
+				for (int i = 0; i < &(*position) - this->_start; i++)
+					this->_alloc.construct(new_start + i, (*this->_start + i));
+				for (int j = 0; first != last; first++, j++)
+					this->_alloc.construct(new_start + (&(*position) - this->_start) + j, *first);
+				for (size_type k = 0; k < this->size() - (&(*position) - this->_start); k++)
+					this->_alloc.construct(new_start + (&(*position) - this->_start) + n + k, *(&(*position) + k));
+				for (size_type l = 0; l < this->size(); l++)
+					this->_alloc.destroy(this->_start + l);
+				this->_alloc.deallocate(this->_start, this->capacity());
+				this->_start = new_start;
+				this->_end = new_end;
+				this->_capacity = new_capacity;
+			}
+		}
+
 	private:
 
 		allocator_type _alloc;
