@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/30 15:02:47 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/06/08 14:07:18 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/06/10 13:47:20 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -257,6 +257,38 @@ namespace ft
 			n++;
 		}
 		return (n);
+	}
+
+	template<class InputIterator1, class InputIterator2>
+	bool lexicographical_compare(InputIterator1 first1, InputIterator1 last1,
+								InputIterator2 first2, InputIterator2 last2)
+	{
+		while (first1 != last1)
+		{
+			if (first2 == last2 || *first2 < *first1)
+				return (false);
+			else if (*first1 < *first2)
+				return (true);
+			first1++;
+			first2++;
+		}
+		return (first2 != last2);
+	}
+
+	template<class InputIterator1, class InputIterator2, class Compare>
+	bool lexicographical_compare(InputIterator1 first1, InputIterator1 last1,
+								InputIterator2 first2, InputIterator2 last, Compare comp)
+	{
+		while (first1 != last1)
+		{
+			if (first2 == last2 || comp(*first2, *first1))
+				return (false);
+			else if (comp(*first1, *first2))
+				return (true);
+			first1++;
+			first2++;
+		}
+		return (first2 != last2);
 	}
 }
 

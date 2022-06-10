@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/29 11:53:51 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/06/08 14:09:12 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/06/10 13:48:28 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -480,6 +480,77 @@ namespace ft
 			}
 		}
 
+		//erase element at specified position and return iterator to the element after the last erased
+		iterator erase(iterator position)
+		{
+			pointer pos = &(*position);
+			this->_alloc.destroy(pos);
+			if (&(*position) + 1 != this->_end)
+			{
+				for (int i = 0; i < this->_end - &(*position) - 1; i++)
+				{
+					this->_alloc.construct(&(*position) + i, (*(&(*position)) + i + 1));
+					this->_alloc.destroy(&(*position) + i + 1);
+				}
+			}
+			this->_end--;
+			return (iterator(pos));
+		}
+
+		//erases elements in range from first to last
+		iterator erase(iterator first, iterator last)
+		{
+			pointer f_pos = &(*first);
+			while (first != last)
+			{
+				this->_alloc.destroy(&(*first));
+				first++;
+			}
+			for (int i = 0; i < this->_end - &(*last); i++)
+			{
+				this->_alloc.construct(f_pos + i, *(&(*last) + i));
+				this->_alloc.destroy(&(*last) + i);
+			}
+			this->_end -= &(*last) - f_pos;
+			return (iterator(f_pos));
+		}
+
+		//swaps vector contents with x
+		void swap(vector &x)
+		{
+			pointer x_start = x._start;
+			pointer x_end = x._end;
+			pointer x_capacity = x._capacity;
+			allocator_type x_alloc = x._alloc;
+
+			x._start = this->_start;
+			x._end = this->_end;
+			x._capacity = this->_capacity;
+			x._alloc = this->_alloc;
+
+			this->_start = x_start;
+			this->_end = x_end;
+			this->_capacity = x_capacity;
+			this->_alloc = x_alloc;
+		}
+
+		//destroys all elements in vector, leaving it with size 0
+		void clear(void)
+		{
+			size_type size = this->size();
+			for (size_type i = 0; i < size; i++)
+			{
+				this->_end--;
+				this->_alloc.destroy(this->_end);
+			}
+		}
+
+		//returns vectors allocator
+		allocator_type get_allocator(void) const
+		{
+			return (this->_alloc);
+		}
+
 	private:
 
 		allocator_type _alloc;
@@ -490,6 +561,61 @@ namespace ft
 		//pointer to end of allocated block
 		pointer _capacity;
 	};
+
+	//non-member overloads
+
+	template<class T, class Alloc>
+	bool operator==(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+	{
+		if (lhs.size() != rhs.size())
+			return (false);
+		const_iterator first_l = lhs.begin();
+		const_iterator first_r = rhs.begin();
+		while (first_l != lhs.end())
+		{
+			if (*first_l != *first_r || first_r == rhs.end())
+				return (false);
+			first_l++;
+			first_r++;
+		}
+		return (true);
+	}
+
+	template<class T, class Alloc>
+	bool operator!=(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+	{
+		return (!(lhs == rhs));
+	}
+
+	template<class T, class Alloc>
+	bool operator<(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+	{
+		return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+	}
+
+	template<class T, class Alloc>
+	bool operator<=(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+	{
+		return (!(rhs < lhs))
+	}
+
+	template<class T, class Alloc>
+	bool operator>(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+	{
+		return (rhs < lhs)
+	}
+
+	template<class T, class Alloc>
+	bool operator>=(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+	{
+		return (!(lhs < rhs));
+	}
+
+	template<class T, class Alloc>
+	void swap(vector<T, Alloc> &x, vector<T, Alloc> &y)
+	{
+		x.swap(y);
+	}
 }
 
 #endif
