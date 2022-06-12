@@ -41,12 +41,12 @@ namespace ft
 		//constructors to be implemented
 		//default constructor
 		explicit vector(const allocator_type &alloc = allocator_type())
-			: _alloc(alloc), _start(NULL), _end(NULL), _capacity(NULL) {}
+			: _alloc(alloc), _start(nullptr), _end(nullptr), _capacity(nullptr) {}
 
 		//fills n elements with value val
 		explicit vector(size_type n, const value_type &val = value_type(), \
 			const allocator_type &alloc = allocator_type())
-			: _alloc(alloc), _start(NULL), _end(NULL), _capacity(NULL)
+			: _alloc(alloc), _start(nullptr), _end(nullptr), _capacity(nullptr)
 		{
 			_start = _alloc.allocate(n);
 			_capacity = _start + n;
@@ -75,7 +75,7 @@ namespace ft
 			}
 		}
 
-		vector(const vector &x) : _alloc(x._alloc), _start(NULL), _end(NULL), _capacity(NULL)
+		vector(const vector &x) : _alloc(x._alloc), _start(nullptr), _end(nullptr), _capacity(nullptr)
 		{
 			this->insert(this->begin(), x.begin(), x.end());
 		}

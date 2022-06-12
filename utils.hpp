@@ -63,7 +63,7 @@ namespace ft
 		typedef typename ft::iterator_traits<Iterator>::reference reference;
 		typedef typename ft::iterator_traits<Iterator>::iterator_category iterator_category;
 
-		reverse_iterator(void) : _element(NULL) {}
+		reverse_iterator(void) : _element(nullptr) {}
 		explicit reverse_iterator(iterator_type it) : _element(it) {}
 		template <class Iter>
 			reverse_iterator(const reverse_iterator<Iter> &rev_it)

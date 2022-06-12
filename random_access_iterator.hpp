@@ -30,7 +30,7 @@ namespace ft
 		typedef typename ft::iterator<ft::random_access_iterator_tag, T>::iterator_category iterator_category;
 
 		//default constructor
-		random_access_iterator(void) : _element(NULL) {}
+		random_access_iterator(void) : _element(nullptr) {}
 		//copy constructor
 		random_access_iterator(const random_access_iterator &copy) : _element(copy._element) {}
 		//pointer constructor
