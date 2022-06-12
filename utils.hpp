@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/30 15:02:47 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/06/10 13:47:20 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/06/12 14:03:52 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ namespace ft
 
 		reference operator*(void) const
 		{
-			iterator temp = this->_element;
+			iterator_type temp = this->_element;
 			temp--;
 			return (*temp);
 		}
@@ -238,14 +238,14 @@ namespace ft
 		return (lhs.base() - rhs.base());
 	}
 
-	//convert n to std::string
-	template<typename T>
-	std::string to_str(T n)
-	{
-		std::ostringstream oss;
-		oss << n;
-		return (oss.str());
-	}
+	// //convert n to std::string
+	// template<typename T>
+	// std::string to_str(T n)
+	// {
+	// 	std::ostringstream oss;
+	// 	oss << n;
+	// 	return (oss.str());
+	// }
 
 	template<class InputIterator>
 	typename ft::iterator_traits<InputIterator>::difference_type distance(InputIterator first, InputIterator last)
@@ -277,7 +277,7 @@ namespace ft
 
 	template<class InputIterator1, class InputIterator2, class Compare>
 	bool lexicographical_compare(InputIterator1 first1, InputIterator1 last1,
-								InputIterator2 first2, InputIterator2 last, Compare comp)
+								InputIterator2 first2, InputIterator2 last2, Compare comp)
 	{
 		while (first1 != last1)
 		{

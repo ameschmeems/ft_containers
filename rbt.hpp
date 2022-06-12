@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/12 01:52:17 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/06/12 01:52:17 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/06/12 15:17:46 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ namespace ft
 		typedef typename allocator_type::reference reference;
 		typedef typename allocator_type::const_reference const_reference;
 		typedef typename allocator_type::pointer pointer;
-		typedef typename allocator_type::const_pointer pointer;
+		typedef typename allocator_type::const_pointer const_pointer;
 		typedef ptrdiff_t difference_type;
 		typedef size_t size_type;
 
@@ -49,7 +49,18 @@ namespace ft
 			bool color;
 		};
 
-		RBT(void) : _size(0), _root(nullptr) {}
+		//temporary measure
+		void clear() {}
+
+		RBT(void) : _size(0)
+		{
+			this->_nil = this->_node_alloc.allocate(1);
+			this->_nil->color = BLACK;
+			this->_nil->left = nullptr;
+			this->_nil->right = nullptr;
+			this->_root = this->_nil;
+		}
+
 		~RBT(void) {this->clear();}
 
 		size_type size(void)
@@ -69,19 +80,23 @@ namespace ft
 			n->data = this->_alloc.allocate(1);
 			this->_alloc.construct(n->data, val);
 			n->parent = nullptr;
-			n->left = nullptr;
-			n->right = nullptr;
+			n->left = this->_nil;
+			n->right = this->_nil;
 			n->color = RED;
 
 			node *y = nullptr;
 			node *x = this->_root;
-			while (x != nullptr)
+			while (x != this->_nil)
 			{
 				y = x;
 				if (n->data->first < x->data->first)
 					x = x->left;
-				else
+				else if (n->data->first > x->data->first)
 					x = x->right;
+				else
+				{
+					return (x);
+				}
 			}
 			n->parent = y;
 			if (y == nullptr)
@@ -91,6 +106,7 @@ namespace ft
 			else
 				y->right = n;
 
+			this->_size++;
 			//if n is the root node, recolor it to black and end
 			if (n->parent == nullptr)
 			{
@@ -115,7 +131,55 @@ namespace ft
 
 		node *find(const key_type &key) const
 		{
-			_findHelper(key, nullptr);
+			return (_findHelper(key, nullptr));
+		}
+
+		size_type erase(const key_type &k)
+		{
+			node *ptr = find(k);
+			node *x;
+			node *y;
+			bool originalColor = ptr->color;
+
+			if (ptr == this->_nil)
+				return (0);
+			if (ptr->left == this->_nil)
+			{
+				x = ptr->right;
+				_nodeTransplant(ptr, x);
+			}
+			else if (ptr->right == this->_nil)
+			{
+				x = ptr->left;
+				_nodeTransplant(ptr, x);
+			}
+			else
+			{
+				y = _min(ptr->right);
+				originalColor = y->color;
+				x = y->right;
+				if (y->parent == ptr)
+					x->parent = y;
+				else
+				{
+					_nodeTransplant(y, x);
+					y->right = ptr->right;
+					y->right->parent = y;
+				}
+				_nodeTransplant(ptr, y);
+				y->left = ptr->left;
+				y->left->parent = y;
+				y->color = ptr->color;
+			}
+			_clearNode(ptr);
+			if (originalColor == BLACK)
+				_fixErase(x);
+			return (1);
+		}
+
+		void print(void) const
+		{
+			_printHelper("", this->_root, false);
 		}
 
 	private:
@@ -134,13 +198,13 @@ namespace ft
 		{
 			node *y = x->right;
 			x->right = y->left;
-			if (y->left != nullptr)
+			if (y->left != this->_nil)
 				y->left->parent = x;
 			y->parent = x->parent;
 			if (x->parent == nullptr)
 				this->_root = y;
 			else if (x == x->parent->left)
-				x->parent->keft = y;
+				x->parent->left = y;
 			else
 				x->parent->right = y;
 			y->left = x;
@@ -152,7 +216,7 @@ namespace ft
 		{
 			node *y = x->left;
 			x->left = y->right;
-			if (y->right != nullptr)
+			if (y->right != this->_nil)
 				y->right->parent = x;
 			y->parent = x->parent;
 			if (x->parent == nullptr)
@@ -163,6 +227,12 @@ namespace ft
 				x->parent->left = y;
 			y->right = x;
 			x->parent = y;
+		}
+
+		void _clearNode(node *n)
+		{
+			this->_alloc.deallocate(n->data, 1);
+			this->_node_alloc.deallocate(n, 1);
 		}
 
 		void _fixInsert(node *x)
@@ -220,39 +290,149 @@ namespace ft
 			this->_root->color = BLACK;
 		}
 
-		node *_findHelper(const key_type &key, node *ptr)
+		node *_findHelper(const key_type &key, node *ptr) const
 		{
-			node *n = nullptr;
+			node *n = this->_nil;
 
-			if (this->_root == nullptr)
-				return (nullptr);
+			if (this->_root == this->_nil)
+				return (this->_nil);
 			if (ptr == nullptr)
 				ptr = this->_root;
 			if (ptr->data->first == key)
 				return (ptr);
 			if (!_hasChildren(ptr))
-				return (nullptr);
-			if (ptr->data->first > key && ptr->left == nullptr)
-				return (nullptr);
+				return (this->_nil);
+			if (ptr->data->first > key && ptr->left == this->_nil)
+				return (this->_nil);
 			else if (ptr->data->first > key)
 				n = _findHelper(key, ptr->left);
-			if (ptr->data->first < key && ptr->right == nullptr)
-				return (nullptr);
+			if (ptr->data->first < key && ptr->right == this->_nil)
+				return (this->_nil);
 			else if (ptr->data->first < key)
 				n = _findHelper(key, ptr->right);
 			return (n);
 
 		}
 
-		bool _hasChildrem(node *n)
+		bool _hasChildren(node *n) const
 		{
 			if (n->left == nullptr && n->right == nullptr)
 				return (false);
 			return (true);
 		}
 
+		//replaces node x with node y
+		void _nodeTransplant(node *x, node *y)
+		{
+			if (x->parent == nullptr)
+				this->_root = y;
+			else if (x == x->parent->left)
+				x->parent->left = y;
+			else
+				x->parent->right = y;
+			y->parent = x->parent;
+		}
+
+		//return pointer to node with smallest key (left-most in the tree)
+		node *_min(node *ptr)
+		{
+			while (ptr->left != this->_nil)
+				ptr = ptr->left;
+			return (ptr);
+		}
+
+		void _fixErase(node *x)
+		{
+			node *y;
+			while (x != this->_root && x->color == BLACK)
+			{
+				if (x == x->parent->left)
+				{
+					y = x->parent->right;
+					if (y->color == RED)
+					{
+						y->color = BLACK;
+						x->parent->color = RED;
+						_leftRotate(x->parent);
+						y = x->parent->right;
+					}
+					if (y->left->color == BLACK && y->right->color == BLACK)
+					{
+						y->color = RED;
+						x = x->parent;
+					}
+					else
+					{
+						if (y->right->color == BLACK)
+						{
+							y->left->color = BLACK;
+							y->color = RED;
+							_rightRotate(y);
+							y = x->parent->right;
+						}
+						y->color = x->parent->color;
+						x->parent->color = BLACK;
+						y->right->color = BLACK;
+						_leftRotate(x->parent);
+						x = this->_root;
+					}
+				}
+				else
+				{
+					y = x->parent->left;
+					if (y->color == RED)
+					{
+						y->color = BLACK;
+						x->parent->color = RED;
+						_rightRotate(x->parent);
+						y = x->parent->left;
+					}
+					if (y->right->color == BLACK && y->left->color == BLACK)
+					{
+						y->color = RED;
+						x = x->parent;
+					}
+					else
+					{
+						if (y->left->color == BLACK)
+						{
+							y->right->color = BLACK;
+							y->color = RED;
+							_leftRotate(y);
+							y = x->parent->left;
+						}
+						y->color = x->parent->color;
+						x->parent->color = BLACK;
+						y->left->color = BLACK;
+						_rightRotate(x->parent);
+						x = this->_root;
+					}
+				}
+			}
+			x->color = BLACK;
+		}
+
+		void _printHelper(const std::string& prefix, const node* n, bool isLeft) const
+		{
+			if (n != this->_nil && n != nullptr)
+			{
+				std::cout << prefix;
+
+				std::cout << (isLeft ? "├──" : "└──" );
+
+				// print the value of the node
+				std::cout << n->data->first << std::endl;
+
+				// enter the next tree level - left and right branch
+				_printHelper(prefix + (isLeft ? "│   " : "    "), n->left, true);
+				_printHelper(prefix + (isLeft ? "│   " : "    "), n->right, false);
+			}
+		}
+
 		//pointer to root node of the tree
 		node *_root;
+		//pointer to sentinel nil node
+		node *_nil;
 		//size of the tree
 		size_type _size;
 		//allocator object for values
