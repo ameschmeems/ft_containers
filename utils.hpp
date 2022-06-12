@@ -36,8 +36,12 @@ namespace ft
 		typedef Category iterator_category;
 	};
 
-	//empty class to identify random_access_iterator
-	class random_access_iterator_tag {};
+	//empty classes to identify iterator types
+	struct input_iterator_tag {};
+	struct output_iterator_tag {};
+	struct forward_iterator_tag : input_iterator_tag {};
+	struct bidirectional_iterator_tag : forward_iterator_tag {};
+	struct random_access_iterator_tag : bidirectional_iterator_tag {};
 
 	//struct defining iterator properties, taken from Iterator class
 	template <class Iterator>
@@ -48,6 +52,26 @@ namespace ft
 		typedef typename Iterator::pointer pointer;
 		typedef typename Iterator::reference reference;
 		typedef typename Iterator::iterator_category iterator_category;
+	};
+
+	template <typename T>
+	struct iterator_traits<T *>
+	{
+		typedef T value_type;
+		typedef ptrdiff_t difference_type;
+		typedef T* pointer;
+		typedef T& reference;
+		typedef random_access_iterator_tag iterator_category;
+	};
+
+	template <typename T>
+	struct iterator_traits<const T *>
+	{
+		typedef T value_type;
+		typedef ptrdiff_t difference_type;
+		typedef T* pointer;
+		typedef T& reference;
+		typedef random_access_iterator_tag iterator_category;
 	};
 
 	//reverse iterator to given Iterator class

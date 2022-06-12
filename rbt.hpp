@@ -39,6 +39,8 @@ namespace ft
 		typedef typename allocator_type::const_pointer const_pointer;
 		typedef ptrdiff_t difference_type;
 		typedef size_t size_type;
+		typedef node* iter;
+		typedef const node* const_iter;
 
 		struct node
 		{
