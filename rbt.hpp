@@ -25,7 +25,8 @@
 
 namespace ft
 {
-	template <typename Key, typename T, typename Alloc = std::allocator<pair<const Key, T> > >
+	template <typename Key, typename T,
+			class Alloc = std::allocator<pair<const Key, T> >, class Compare = std::less<Key> >
 	class RBT
 	{
 	public:
@@ -44,6 +45,7 @@ namespace ft
 		typedef size_t size_type;
 		typedef node* iter;
 		typedef const node* const_iter;
+		typedef Compare key_compare;
 
 		struct node
 		{
@@ -54,7 +56,18 @@ namespace ft
 			bool color;
 		};
 
-		RBT(void) : _size(0)
+		RBT(void) : _size(0), _comp(), _alloc()
+		{
+			this->_nil = this->_node_alloc.allocate(1);
+			this->_nil->color = BLACK;
+			this->_nil->left = nullptr;
+			this->_nil->right = nullptr;
+			this->_root = this->_nil;
+		}
+
+		explicit RBT(const key_compare &comp = key_compare(),
+					const allocator_type &alloc = allocator_type())
+			: _size(0), _comp(comp), _alloc(alloc)
 		{
 			this->_nil = this->_node_alloc.allocate(1);
 			this->_nil->color = BLACK;
@@ -91,9 +104,9 @@ namespace ft
 			while (x != this->_nil)
 			{
 				y = x;
-				if (n->data->first < x->data->first)
+				if (this->_comp(n->data->first, x->data->first))
 					x = x->left;
-				else if (n->data->first > x->data->first)
+				else if (this->_comp(x->data->first, n->data->first))
 					x = x->right;
 				else
 				{
@@ -103,7 +116,7 @@ namespace ft
 			n->parent = y;
 			if (y == nullptr)
 				this->_root = n;
-			else if (n->data->first < y->data->first)
+			else if (this->_comp(n->data->first, y->data->first))
 				y->left = n;
 			else
 				y->right = n;
@@ -183,6 +196,43 @@ namespace ft
 		void print(void) const
 		{
 			_printHelper("", this->_root, false);
+		}
+
+		allocator_type get_allocator(void) const
+		{
+			return (this->_alloc);
+		}
+
+		key_compare get_comp(void) const
+		{
+			return (this->_comp);
+		}
+
+		//for iterators
+		iter begin(void) const
+		{
+			iter temp = this->_root;
+			while (temp != this->_nil && temp->left != this->_nil)
+				temp = temp->left;
+			return (temp);
+		}
+
+		iter rbegin(void) const
+		{
+			iter temp = this->_root;
+			while (temp != this->_nil && temp->right != this->_nil)
+				temp = temp->_right;
+			return (temp);
+		}
+
+		size_type max_size(void) const
+		{
+			return (this->_alloc.max_size());
+		}
+
+		iter getNil(void) const
+		{
+			return (this->_nil);
 		}
 
 	private:
@@ -298,20 +348,20 @@ namespace ft
 			node *n = this->_nil;
 
 			if (this->_root == this->_nil)
-				return (this->_nil);
+				return (nullptr);
 			if (ptr == nullptr)
 				ptr = this->_root;
 			if (ptr->data->first == key)
 				return (ptr);
 			if (!_hasChildren(ptr))
 				return (this->_nil);
-			if (ptr->data->first > key && ptr->left == this->_nil)
+			if (this->_comp(key, ptr->data->first) && ptr->left == this->_nil)
 				return (this->_nil);
-			else if (ptr->data->first > key)
+			else if (this->_comp(key, ptr->data->first))
 				n = _findHelper(key, ptr->left);
-			if (ptr->data->first < key && ptr->right == this->_nil)
+			if (this->_comp(ptr->data->first, key) && ptr->right == this->_nil)
 				return (this->_nil);
-			else if (ptr->data->first < key)
+			else if (this->_comp(ptr->data->first, key))
 				n = _findHelper(key, ptr->right);
 			return (n);
 
@@ -438,6 +488,8 @@ namespace ft
 		node *_nil;
 		//size of the tree
 		size_type _size;
+		//comparison object
+		key_compare _comp;
 		//allocator object for values
 		allocator_type _alloc;
 		//allocator object for tree nodes
