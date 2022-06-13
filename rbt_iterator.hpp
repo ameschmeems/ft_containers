@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/12 23:22:32 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/06/12 23:22:32 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/06/13 13:38:39 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,6 @@
 
 #include "utils.hpp"
 #include "rbt.hpp"
-
-//TBD: i think i fucked up increments/decrements bc of using a sentinel nil node over nullptrs
-//but im too tired to fix it right now so thats up to tomorrow's me
 
 namespace ft
 {
@@ -84,21 +81,21 @@ namespace ft
 		RBT_Iterator &operator++(void)
 		{
 			node_type *temp;
-			if (!this->_ptr)
+			if (!this->_ptr || _isNil(this->_ptr))
 				this->_ptr = this->_first;
-			else if (!this->_ptr->right)
+			else if (_isNil(this->_ptr->right))
 			{
 				temp = this->_ptr->_parent;
-				while (temp && temp->data->first < this->_ptr->data->first)
+				while (!_isNil(temp) && temp->data->first < this->_ptr->data->first)
 					temp = temp->parent;
 				this->_ptr = temp;
 			}
-			else if (!this->_ptr->right->left)
+			else if (_isNil(this->_ptr->right->left))
 				this->_ptr = this->_ptr->right;
-			else if (this->_ptr->right0>left)
+			else if (!_isNil(this->_ptr->right->left))
 			{
 				temp = this->_p->right->left;
-				while (temp->left)
+				while (!_isNil(temp->left))
 					temp = temp->left;
 				this->_ptr = temp;
 			}
@@ -115,21 +112,21 @@ namespace ft
 		RBT_Iterator &operator--(void)
 		{
 			node_type temp;
-			if (!this->_ptr)
+			if (!this->_ptr || _isNil(this->_ptr))
 				this->_ptr = this->_first;
-			else if (!this->_ptr->left)
+			else if (_isNil(this->_ptr->left))
 			{
 				temp = this->_ptr->parent;
-				while (temp && temp->data->first > this->_ptr->data->first)
+				while (!_isNil(temp) && temp->data->first > this->_ptr->data->first)
 					temp = temp->parent;
 				this->_ptr = temp;
 			}
-			else if (!this->_ptr->left->right)
+			else if (_isNil(this->_ptr->left->right))
 				this->_ptr = this->_ptr->left
-			else if (this->_ptr->left->right)
+			else if (!_isNil(this->_ptr->left->right))
 			{
 				temp = this->_ptr->left->right;
-				while (temp->right)
+				while (!_isNil(temp->right))
 					temp = temp->right;
 				this->_ptr = temp;
 			}
@@ -177,6 +174,13 @@ namespace ft
 		typedef typename RBT<key_type, mapped_type>::iter node;
 		typedef typename RBT<key_type, mapped_type>::const_iter const_node;
 		typedef typename choose<is_const, const_node, node>::type node_type;
+
+		bool _isNil(node *x)
+		{
+			if (!x->left && !x->right)
+				return (true);
+			return (false);
+		}
 
 		node_type _first;
 		node_type _last;

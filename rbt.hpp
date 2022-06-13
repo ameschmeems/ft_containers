@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/12 01:52:17 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/06/12 15:17:46 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/06/13 15:20:14 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,12 @@
 #include <iostream>
 #include <memory>
 #include "utils.hpp"
+#include "rbt_iterator.hpp"
 
 #define BLACK false
 #define RED true
 
-//TBD: do something about duplicate keys; make my life easier by suiting it more for containers
+//TBD: add range constructor
 
 namespace ft
 {
@@ -28,6 +29,8 @@ namespace ft
 	class RBT
 	{
 	public:
+
+		struct node;
 
 		typedef Key key_type;
 		typedef T mapped_type;
@@ -51,9 +54,6 @@ namespace ft
 			bool color;
 		};
 
-		//temporary measure
-		void clear() {}
-
 		RBT(void) : _size(0)
 		{
 			this->_nil = this->_node_alloc.allocate(1);
@@ -63,7 +63,7 @@ namespace ft
 			this->_root = this->_nil;
 		}
 
-		~RBT(void) {this->clear();}
+		~RBT(void) {}
 
 		size_type size(void)
 		{
@@ -176,6 +176,7 @@ namespace ft
 			_clearNode(ptr);
 			if (originalColor == BLACK)
 				_fixErase(x);
+			this->_size--;
 			return (1);
 		}
 

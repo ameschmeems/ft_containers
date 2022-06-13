@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/30 15:02:47 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/06/12 14:03:52 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/06/13 13:33:15 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,12 @@
 # define UTILS_HPP
 
 #include <stddef.h>
+#include <sstream>
 
 namespace ft
 {
 	//base iterator class
-	template<class Category, class T, class Distance = ptrdiff_t,
+	template <class Category, class T, class Distance = ptrdiff_t,
 			class Pointer = T*, class Reference = T&>
 	class iterator
 	{
@@ -158,7 +159,7 @@ namespace ft
 		pointer _element;
 	};
 	//non-member overloads for reverse_iterator
-	template<class Iterator>
+	template <class Iterator>
 	bool operator==(const reverse_iterator<Iterator> &lhs,
 					const reverse_iterator<Iterator> &rhs)
 	{
@@ -166,14 +167,14 @@ namespace ft
 	}
 
 	//for comparisons between reverse_iterator and const_reverse_iterator
-	template<class Iterator_L, class Iterator_R>
+	template <class Iterator_L, class Iterator_R>
 	bool operator==(const reverse_iterator<Iterator_L> &lhs,
 					const reverse_iterator<Iterator_R> &rhs)
 	{
 		return (lhs.base() == rhs.base());
 	}
 
-	template<class Iterator>
+	template <class Iterator>
 	bool operator!=(const reverse_iterator<Iterator> &lhs,
 					const reverse_iterator<Iterator> &rhs)
 	{
@@ -181,14 +182,14 @@ namespace ft
 	}
 
 	//for comparisons between reverse_iterator and const_reverse_iterator
-	template<class Iterator_L, class Iterator_R>
+	template <class Iterator_L, class Iterator_R>
 	bool operator!=(const reverse_iterator<Iterator_L> &lhs,
 					const reverse_iterator<Iterator_R> &rhs)
 	{
 		return (lhs.base() != rhs.base());
 	}
 
-	template<class Iterator>
+	template <class Iterator>
 	bool operator<(const reverse_iterator<Iterator> &lhs,
 					const reverse_iterator<Iterator> &rhs)
 	{
@@ -196,14 +197,14 @@ namespace ft
 	}
 
 	//for comparisons between reverse_iterator and const_reverse_iterator
-	template<class Iterator_L, class Iterator_R>
+	template <class Iterator_L, class Iterator_R>
 	bool operator<(const reverse_iterator<Iterator_L> &lhs,
 					const reverse_iterator<Iterator_R> &rhs)
 	{
 		return (lhs.base() > rhs.base());
 	}
 
-	template<class Iterator>
+	template <class Iterator>
 	bool operator<=(const reverse_iterator<Iterator> &lhs,
 					const reverse_iterator<Iterator> &rhs)
 	{
@@ -211,14 +212,14 @@ namespace ft
 	}
 
 	//for comparisons between reverse_iterator and const_reverse_iterator
-	template<class Iterator_L, class Iterator_R>
+	template <class Iterator_L, class Iterator_R>
 	bool operator<=(const reverse_iterator<Iterator_L> &lhs,
 					const reverse_iterator<Iterator_R> &rhs)
 	{
 		return (lhs.base() >= rhs.base());
 	}
 
-	template<class Iterator>
+	template <class Iterator>
 	bool operator>(const reverse_iterator<Iterator> &lhs,
 					const reverse_iterator<Iterator> &rhs)
 	{
@@ -226,14 +227,14 @@ namespace ft
 	}
 
 	//for comparisons between reverse_iterator and const_reverse_iterator
-	template<class Iterator_L, class Iterator_R>
+	template <class Iterator_L, class Iterator_R>
 	bool operator>(const reverse_iterator<Iterator_L> &lhs,
 					const reverse_iterator<Iterator_R> &rhs)
 	{
 		return (lhs.base() < rhs.base());
 	}
 
-	template<class Iterator>
+	template <class Iterator>
 	bool operator>=(const reverse_iterator<Iterator> &lhs,
 					const reverse_iterator<Iterator> &rhs)
 	{
@@ -241,21 +242,21 @@ namespace ft
 	}
 
 	//for comparisons between reverse_iterator and const_reverse_iterator
-	template<class Iterator_L, class Iterator_R>
+	template <class Iterator_L, class Iterator_R>
 	bool operator>=(const reverse_iterator<Iterator_L> &lhs,
 					const reverse_iterator<Iterator_R> &rhs)
 	{
 		return (lhs.base() <= rhs.base());
 	}
 
-	template<class Iterator>
+	template <class Iterator>
 	reverse_iterator<Iterator> operator+(typename reverse_iterator<Iterator>::difference_type n,
 										const reverse_iterator<Iterator> &rev_it)
 	{
 		return (rev_it + n);
 	}
 
-	template<class Iterator>
+	template <class Iterator>
 	typename reverse_iterator<Iterator>::difference_type operator-(const reverse_iterator<Iterator> &lhs,
 																const reverse_iterator<Iterator> &rhs)
 	{
@@ -263,15 +264,15 @@ namespace ft
 	}
 
 	// //convert n to std::string
-	// template<typename T>
-	// std::string to_str(T n)
-	// {
-	// 	std::ostringstream oss;
-	// 	oss << n;
-	// 	return (oss.str());
-	// }
+	template <typename T>
+	std::string to_str(T n)
+	{
+		std::ostringstream oss;
+		oss << n;
+		return (oss.str());
+	}
 
-	template<class InputIterator>
+	template <class InputIterator>
 	typename ft::iterator_traits<InputIterator>::difference_type distance(InputIterator first, InputIterator last)
 	{
 		typename ft::iterator_traits<InputIterator>::difference_type n = 0;
@@ -283,7 +284,7 @@ namespace ft
 		return (n);
 	}
 
-	template<class InputIterator1, class InputIterator2>
+	template <class InputIterator1, class InputIterator2>
 	bool lexicographical_compare(InputIterator1 first1, InputIterator1 last1,
 								InputIterator2 first2, InputIterator2 last2)
 	{
@@ -299,7 +300,7 @@ namespace ft
 		return (first2 != last2);
 	}
 
-	template<class InputIterator1, class InputIterator2, class Compare>
+	template <class InputIterator1, class InputIterator2, class Compare>
 	bool lexicographical_compare(InputIterator1 first1, InputIterator1 last1,
 								InputIterator2 first2, InputIterator2 last2, Compare comp)
 	{
