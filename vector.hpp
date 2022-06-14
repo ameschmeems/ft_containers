@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/29 11:53:51 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/06/10 13:48:28 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/06/14 14:23:51 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,8 @@ namespace ft
 		//constructs vectro with elements from between two iterators
 		template<class InputIterator>
 		vector(InputIterator first, InputIterator last, \
-				const allocator_type &alloc = allocator_type()) : _alloc(alloc)
+				const allocator_type &alloc = allocator_type(),
+				typename enable_if<!is_integral<InputIterator>::value>::type* = nullptr) : _alloc(alloc)
 		{
 			difference_type n = ft::distance(first, last);
 			this->_start = this->_alloc.allocate(n);
@@ -261,7 +262,8 @@ namespace ft
 
 		//replaces vector contents with ones taken from range between iterators
 		template<class InputIterator>
-		void assign(InputIterator first, InputIterator last)
+		void assign(InputIterator first, InputIterator last,
+					typename enable_if<!is_integral<InputIterator>::value>::type* = nullptr)
 		{
 			this->clear();
 			size_type dist = ft::distance(first, last);
@@ -437,7 +439,8 @@ namespace ft
 
 		//insert elements between first and last, starting at specified position
 		template<class InputIterator>
-		void insert(iterator position, InputIterator first, InputIterator last)
+		void insert(iterator position, InputIterator first, InputIterator last,
+					typename enable_if<!is_integral<InputIterator>::value>::type* = nullptr)
 		{
 			size_type n = ft::distance(first, last);
 			if (size_type(this->_capacity - this->_end) >= n)

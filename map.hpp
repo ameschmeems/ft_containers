@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/13 13:34:39 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/06/13 15:41:39 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/06/14 14:23:10 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,8 @@ namespace ft
 
 		template <class InputIterator>
 		map(InputIterator first, InputIterator second, const key_compare &comp = key_compare,
-			const allocator_type &alloc = allocator_type()) : _tree(comp, alloc)
+			const allocator_type &alloc = allocator_type(),
+			typename enable_if<!is_integral<InputIterator>::value>::type* = nullptr) : _tree(comp, alloc)
 		{
 			while (first != last)
 			{
@@ -182,7 +183,8 @@ namespace ft
 		}
 
 		template <class InputIterator>
-		void insert(InputIterator first, InputIterator last)
+		void insert(InputIterator first, InputIterator last,
+					typename enable_if<!is_integral<InputIterator>::value>::type* = nullptr)
 		{
 			while (first != last)
 			{

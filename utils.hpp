@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/30 15:02:47 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/06/13 13:33:15 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/06/14 14:10:36 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -390,6 +390,48 @@ namespace ft
 	{
 		return (pair<T1, T2>(x, y));
 	}
+
+	//enable_if is used to decide whether a template type substition should be valid with current type
+	template <bool, typename T = void>
+	struct enable_if {};
+
+	template <typename T>
+	struct enable_if<true, T>
+	{
+		typedef T type;
+	};
+
+	//used to decide whether passed type is of integral type
+	template <class T, T v>
+	struct integral_constant
+	{
+		static const T value = v;
+		typedef T value_type;
+		typedef integral_constant<T, v> type;
+	};
+
+	typedef integral_constant<bool, false> false_type;
+	typedef integral_constant<bool, true> true_type;
+
+	//non-itegral types
+	template <class T> struct is_integral : false_type {};
+
+	//integral types
+	template <> struct is_integral<bool> : true_type {};
+	template <> struct is_integral<char> : true_type {};
+	template <> struct is_integral<char16_t> : true_type {};
+	template <> struct is_integral<char32_t> : true_type {};
+	template <> struct is_integral<wchar_t> : true_type {};
+	template <> struct is_integral<signed char> : true_type {};
+	template <> struct is_integral<short int> : true_type {};
+	template <> struct is_integral<int> : true_type {};
+	template <> struct is_integral<long int> : true_type {};
+	template <> struct is_integral<long long int> : true_type {};
+	template <> struct is_integral<unsigned char> : true_type {};
+	template <> struct is_integral<unsigned short int> : true_type {};
+	template <> struct is_integral<unsigned int> : true_type {};
+	template <> struct is_integral<unsigned long int> : true_type {};
+	template <> struct is_integral<unsigned long long int> : true_type {};
 }
 
 #endif
