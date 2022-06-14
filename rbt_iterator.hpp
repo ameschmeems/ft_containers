@@ -44,9 +44,9 @@ namespace ft
 		typedef pair<const key_type, mapped_type> value_type;
 		typedef size_t size_type;
 		typedef ptrdiff_t difference_type;
-	
+
 	private:
-	
+
 		typedef typename RBT<key_type, mapped_type>::iter node;
 		typedef typename RBT<key_type, mapped_type>::const_iter const_node;
 		typedef typename choose<is_const, const_node, node>::type node_type;
@@ -71,17 +71,17 @@ namespace ft
 			return (*this);
 		}
 
-		node_type getPtr(void) const
+		node getPtr(void) const
 		{
 			return (this->_ptr);
 		}
 
-		node_type getFirst(void) const
+		node getFirst(void) const
 		{
 			return (this->_first);
 		}
 
-		node_type getLast(void) const
+		node getLast(void) const
 		{
 			return (this->_last);
 		}
