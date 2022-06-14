@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/29 11:53:51 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/06/14 14:23:51 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/06/14 19:53:04 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <memory>
 #include "utils.hpp"
 #include "random_access_iterator.hpp"
+#include <iostream>
 
 //TBD: modify with enable_if once implemented
 
@@ -36,6 +37,7 @@ namespace ft
 		typedef typename ft::random_access_iterator<const T> const_iterator;
 		typedef typename ft::reverse_iterator<iterator> reverse_iterator;
 		typedef typename ft::reverse_iterator<const_iterator> const_reverse_iterator;
+		typedef typename iterator_traits<iterator>::difference_type difference_type;
 		typedef typename allocator_type::size_type size_type;
 
 		//constructors to be implemented
@@ -72,7 +74,7 @@ namespace ft
 			{
 				this->_alloc.construct(this->_end, *first);
 				first++;
-				this->_end--;
+				this->_end++;
 			}
 		}
 
@@ -85,7 +87,7 @@ namespace ft
 		~vector(void)
 		{
 			this->clear();
-			this-_alloc.deallocate(this->_start, this->capacity());
+			this->_alloc.deallocate(this->_start, this->capacity());
 		}
 
 		vector &operator=(const vector &x)
@@ -104,7 +106,7 @@ namespace ft
 
 		const_iterator begin(void) const
 		{
-			return (this->_start);
+			return (const_iterator(this->_start));
 		}
 
 		iterator end(void)
@@ -144,13 +146,13 @@ namespace ft
 		//returns number of elements stored
 		size_type size(void) const
 		{
-			return (this->_end - this->start);
+			return (this->_end - this->_start);
 		}
 
 		//returns max possible size for the vector
 		size_type max_size(void) const
 		{
-			return (allocator_type().max_size);
+			return (allocator_type().max_size());
 		}
 
 		//resizes vector to fit n elements
@@ -225,8 +227,8 @@ namespace ft
 		reference at(size_type n)
 		{
 			if (n >= this->size())
-				throw std::out_of_range("vector::at: n == " + ft::to_str(n)
-										+ " is bigger than vector size == ", ft::to_str(this->size()));
+				throw std::out_of_range("vector::at: n == " + to_str(n)
+										+ " is bigger than vector size == " + to_str(this->size()));
 			return ((*this)[n]);
 		}
 
@@ -234,7 +236,7 @@ namespace ft
 		{
 			if (n >= this->size())
 				throw std::out_of_range("vector::at: n == " + ft::to_str(n)
-										+ " is bigger than vector size == ", ft::to_str(this->size()));
+										+ " is bigger than vector size == " + ft::to_str(this->size()));
 			return ((*this)[n]);
 		}
 
@@ -395,7 +397,7 @@ namespace ft
 			if (size_type(this->_capacity - this->_end) >= n)
 			{
 				for (size_type i = 0; i < this->size() - pos; i++)
-					this->_alloc.construct(this->_end - i + (n - 1), *(this->_end - i - 1))
+					this->_alloc.construct(this->_end - i + (n - 1), *(this->_end - i - 1));
 				this->_end += n;
 				while (n)
 				{
@@ -419,15 +421,15 @@ namespace ft
 						this->_alloc.deallocate(new_start, new_capacity_ptr - new_start);
 					new_capacity = this->size() + n;
 					new_start = this->_alloc.allocate(new_capacity);
-					new_capacity_ptr = new_start + next_capacity;
+					new_capacity_ptr = new_start + new_capacity;
 				}
 				new_end = new_start + this->size() + n;
 				for (int i = 0; i < (&(*position) - this->_start); i++)
 					this->_alloc.construct(new_start + i, *(this->_start + i));
 				for (size_type j = 0; j < n; j++)
 					this->_alloc.construct(new_start + pos + j, val);
-				for (size_type k = 0; j < (this->size() - pos); j++)
-					this->_alloc.construct(new_end - j - 1, *(this->_end - j - 1));
+				for (size_type k = 0; k < (this->size() - pos); k++)
+					this->_alloc.construct(new_end - k - 1, *(this->_end - k - 1));
 				for (size_type l = 0; l < this->size(); l++)
 					this->_alloc.destroy(this->_start + l);
 				this->_alloc.deallocate(this->_start, this->capacity());
@@ -445,7 +447,7 @@ namespace ft
 			size_type n = ft::distance(first, last);
 			if (size_type(this->_capacity - this->_end) >= n)
 			{
-				for (size_type i = 0; i < (this->size() - &(*position) - this->_start); i++)
+				for (size_type i = 0; i < (this->size() - (&(*position) - this->_start)); i++)
 					this->_alloc.construct(this->_end - i + n - 1, *(this->_end - i - 1));
 				this->_end += n;
 				while (first != last)
@@ -457,6 +459,7 @@ namespace ft
 			}
 			else
 			{
+				//an issue here somewhere
 				pointer new_start = this->_alloc.allocate(this->size() * 2);
 				pointer new_end = new_start + this->size() + n;
 				pointer new_capacity = new_start + (this->size() * 2);
@@ -469,7 +472,7 @@ namespace ft
 					new_capacity = new_end;
 				}
 				for (int i = 0; i < &(*position) - this->_start; i++)
-					this->_alloc.construct(new_start + i, (*this->_start + i));
+					this->_alloc.construct(new_start + i, *(this->_start + i));
 				for (int j = 0; first != last; first++, j++)
 					this->_alloc.construct(new_start + (&(*position) - this->_start) + j, *first);
 				for (size_type k = 0; k < this->size() - (&(*position) - this->_start); k++)
@@ -490,9 +493,9 @@ namespace ft
 			this->_alloc.destroy(pos);
 			if (&(*position) + 1 != this->_end)
 			{
-				for (int i = 0; i < this->_end - &(*position) - 1; i++)
+				for (int i = 0; i < this->_end - (&(*position) - 1); i++)
 				{
-					this->_alloc.construct(&(*position) + i, (*(&(*position)) + i + 1));
+					this->_alloc.construct(&(*position) + i, (*(position + i + 1)));
 					this->_alloc.destroy(&(*position) + i + 1);
 				}
 			}
@@ -572,8 +575,8 @@ namespace ft
 	{
 		if (lhs.size() != rhs.size())
 			return (false);
-		const_iterator first_l = lhs.begin();
-		const_iterator first_r = rhs.begin();
+		typename vector<T, Alloc>::const_iterator first_l = lhs.begin();
+		typename vector<T, Alloc>::const_iterator first_r = rhs.begin();
 		while (first_l != lhs.end())
 		{
 			if (*first_l != *first_r || first_r == rhs.end())
@@ -599,13 +602,13 @@ namespace ft
 	template<class T, class Alloc>
 	bool operator<=(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
 	{
-		return (!(rhs < lhs))
+		return (!(rhs < lhs));
 	}
 
 	template<class T, class Alloc>
 	bool operator>(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
 	{
-		return (rhs < lhs)
+		return (rhs < lhs);
 	}
 
 	template<class T, class Alloc>

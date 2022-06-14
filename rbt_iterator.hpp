@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/12 23:22:32 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/06/13 13:38:39 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/06/14 21:08:31 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,16 +44,24 @@ namespace ft
 		typedef pair<const key_type, mapped_type> value_type;
 		typedef size_t size_type;
 		typedef ptrdiff_t difference_type;
+	
+	private:
+	
+		typedef typename RBT<key_type, mapped_type>::iter node;
+		typedef typename RBT<key_type, mapped_type>::const_iter const_node;
+		typedef typename choose<is_const, const_node, node>::type node_type;
+
+	public:
 
 		RBT_Iterator(void) : _first(nullptr), _last(nullptr), _ptr(nullptr) {}
 
 		RBT_Iterator(node_type ptr, node_type first = nullptr, node_type last = nullptr)
-			: _ptr(ptr), _first(first), _last(last) {}
+			: _first(first), _last(last), _ptr(ptr) {}
 
 		~RBT_Iterator(void) {}
 
 		template <typename U, typename V, bool const_val>
-		RBT_Iterator(const RBT_Iterator<U, V, const_val) : _p(r.getPtr()) {}
+		RBT_Iterator(const RBT_Iterator<U, V, const_val> &rhs) : _ptr(rhs.getPtr()) {}
 
 		RBT_Iterator &operator=(const RBT_Iterator &rhs)
 		{
@@ -80,22 +88,22 @@ namespace ft
 
 		RBT_Iterator &operator++(void)
 		{
-			node_type *temp;
+			node_type temp;
 			if (!this->_ptr || _isNil(this->_ptr))
 				this->_ptr = this->_first;
-			else if (_isNil(this->_ptr->right))
+			else if (!this->_ptr->right || _isNil(this->_ptr->right))
 			{
-				temp = this->_ptr->_parent;
-				while (!_isNil(temp) && temp->data->first < this->_ptr->data->first)
+				temp = this->_ptr->parent;
+				while (temp && !_isNil(temp) && temp->data->first < this->_ptr->data->first)
 					temp = temp->parent;
 				this->_ptr = temp;
 			}
-			else if (_isNil(this->_ptr->right->left))
+			else if (!this->_ptr->right->left || _isNil(this->_ptr->right->left))
 				this->_ptr = this->_ptr->right;
-			else if (!_isNil(this->_ptr->right->left))
+			else if (this->_ptr->right->left && !_isNil(this->_ptr->right->left))
 			{
-				temp = this->_p->right->left;
-				while (!_isNil(temp->left))
+				temp = this->_ptr->right->left;
+				while (temp->left && !_isNil(temp->left))
 					temp = temp->left;
 				this->_ptr = temp;
 			}
@@ -122,7 +130,7 @@ namespace ft
 				this->_ptr = temp;
 			}
 			else if (_isNil(this->_ptr->left->right))
-				this->_ptr = this->_ptr->left
+				this->_ptr = this->_ptr->left;
 			else if (!_isNil(this->_ptr->left->right))
 			{
 				temp = this->_ptr->left->right;
@@ -140,42 +148,32 @@ namespace ft
 			return (temp);
 		}
 
-		value_type &operator*(void)
+		value_type &operator*(void) const
 		{
-			if (!this->_ptr)
-			{
-				RBT_Iterator temp(*this);
-				(*this)++;
-				return (*this);
-			}
 			return (*(this->_ptr->data));
 		}
 
-		value_type *operator->(void)
+		value_type *operator->(void) const
 		{
-			return (^(this->operator*()));
+			return (&(this->operator*()));
 		}
 
 		//template to allow comparisons with const iterators
 		template <typename U, typename V, bool const_val>
 		bool operator==(const RBT_Iterator<U, V, const_val> &rhs) const
 		{
-			return (this->_ptr == rhs._ptr);
+			return (this->getPtr() == rhs.getPtr());
 		}
 
 		template <typename U, typename V, bool const_val>
 		bool operator!=(const RBT_Iterator<U, V, const_val> &rhs) const
 		{
-			return (this->_ptr != rhs._ptr);
+			return (this->getPtr() != rhs.getPtr());
 		}
 
 	private:
 
-		typedef typename RBT<key_type, mapped_type>::iter node;
-		typedef typename RBT<key_type, mapped_type>::const_iter const_node;
-		typedef typename choose<is_const, const_node, node>::type node_type;
-
-		bool _isNil(node *x)
+		bool _isNil(node_type x)
 		{
 			if (!x->left && !x->right)
 				return (true);

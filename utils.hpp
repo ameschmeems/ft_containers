@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/30 15:02:47 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/06/14 14:10:36 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/06/14 18:19:00 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ namespace ft
 		typedef typename ft::iterator_traits<Iterator>::iterator_category iterator_category;
 
 		reverse_iterator(void) : _element(nullptr) {}
-		explicit reverse_iterator(iterator_type it) : _element(it) {}
+		explicit reverse_iterator(iterator_type it) : _element(it.base()) {}
 		template <class Iter>
 			reverse_iterator(const reverse_iterator<Iter> &rev_it)
 				: _element(rev_it.base()) {}
@@ -144,6 +144,7 @@ namespace ft
 		reverse_iterator &operator-=(difference_type n)
 		{
 			*this = *this - n;
+			return (*this);
 		}
 		pointer operator->(void) const
 		{
@@ -260,7 +261,7 @@ namespace ft
 	typename reverse_iterator<Iterator>::difference_type operator-(const reverse_iterator<Iterator> &lhs,
 																const reverse_iterator<Iterator> &rhs)
 	{
-		return (lhs.base() - rhs.base());
+		return (rhs.base() - lhs.base());
 	}
 
 	// //convert n to std::string

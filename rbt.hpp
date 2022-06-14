@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/12 01:52:17 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/06/13 15:20:14 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/06/14 19:37:26 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,12 +78,12 @@ namespace ft
 
 		~RBT(void) {}
 
-		size_type size(void)
+		size_type size(void) const
 		{
 			return (this->_size);
 		}
 
-		bool empty(void)
+		bool empty(void) const
 		{
 			return (this->_size == 0);
 		}
@@ -221,7 +221,7 @@ namespace ft
 		{
 			iter temp = this->_root;
 			while (temp != this->_nil && temp->right != this->_nil)
-				temp = temp->_right;
+				temp = temp->right;
 			return (temp);
 		}
 

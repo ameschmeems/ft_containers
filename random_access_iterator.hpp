@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/31 11:37:26 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/05/31 15:04:16 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/06/14 19:47:37 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ namespace ft
 		//copy assignment operator
 		random_access_iterator &operator=(const random_access_iterator &it)
 		{
-			this->_element = it.element;
+			this->_element = it._element;
 			return (*this);
 		}
 		//return current pointer
@@ -82,7 +82,7 @@ namespace ft
 			return (*this);
 		}
 		//subtraction/addition
-		random_access_iterator operator+(differnece_type n) const
+		random_access_iterator operator+(difference_type n) const
 		{
 			return (this->_element + n);
 		}

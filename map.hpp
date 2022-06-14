@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/13 13:34:39 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/06/14 14:23:10 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/06/14 20:33:25 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,10 @@ namespace ft
 		typedef typename allocator_type::const_reference const_reference;
 		typedef typename allocator_type::pointer pointer;
 		typedef typename allocator_type::const_pointer const_pointer;
-		typedef typename RBT_Iterator<key_type, mapped_type, false> iterator;
-		typedef typename RBT_Iterator<key_type, mapped_type, true> const_iterator;
-		typedef typename reverse_iterator<iterator> reverse_iterator;
-		typedef typename reverse_iterator<const_iterator> const_reverse_iterator;
+		typedef RBT_Iterator<key_type, mapped_type, false> iterator;
+		typedef RBT_Iterator<key_type, mapped_type, true> const_iterator;
+		typedef ft::reverse_iterator<iterator> reverse_iterator;
+		typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 		typedef ptrdiff_t difference_type;
 		typedef size_t size_type;
 
@@ -70,11 +70,11 @@ namespace ft
 					const allocator_type &alloc = allocator_type()) : _tree(comp, alloc) {}
 
 		template <class InputIterator>
-		map(InputIterator first, InputIterator second, const key_compare &comp = key_compare,
+		map(InputIterator first, InputIterator second, const key_compare &comp = key_compare(),
 			const allocator_type &alloc = allocator_type(),
 			typename enable_if<!is_integral<InputIterator>::value>::type* = nullptr) : _tree(comp, alloc)
 		{
-			while (first != last)
+			while (first != second)
 			{
 				this->_tree.insert(*first);
 				first++;
@@ -162,7 +162,7 @@ namespace ft
 
 		mapped_type &operator[](const key_type &key)
 		{
-			return ((*((this->insert(make_pair(k, mapped_type()))).first)).second);
+			return ((*((this->insert(make_pair(key, mapped_type()))).first)).second);
 		}
 
 		ft::pair<iterator, bool> insert(const value_type &val)
@@ -177,7 +177,7 @@ namespace ft
 
 		iterator insert(iterator position, const value_type &val)
 		{
-			if (pos != iterator())
+			if (position != iterator())
 				return (this->_tree.insert(val));
 			return (iterator());
 		}
@@ -226,7 +226,7 @@ namespace ft
 			iterator it = this->begin();
 			while (it != this->end())
 			{
-				this->erase(*it);
+				this->_tree.erase(it->first);
 				it++;
 			}
 		}
