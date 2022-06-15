@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/12 01:52:17 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/06/14 19:37:26 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/06/15 19:07:53 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,6 @@
 
 #define BLACK false
 #define RED true
-
-//TBD: add range constructor
 
 namespace ft
 {
@@ -55,15 +53,6 @@ namespace ft
 			node *right;
 			bool color;
 		};
-
-		RBT(void) : _size(0), _comp(), _alloc()
-		{
-			this->_nil = this->_node_alloc.allocate(1);
-			this->_nil->color = BLACK;
-			this->_nil->left = nullptr;
-			this->_nil->right = nullptr;
-			this->_root = this->_nil;
-		}
 
 		explicit RBT(const key_compare &comp = key_compare(),
 					const allocator_type &alloc = allocator_type())
@@ -135,6 +124,10 @@ namespace ft
 
 			//fix the tree
 			_fixInsert(n);
+			node *temp = this->_root;
+			while (temp->right != this->_nil)
+				temp = temp->right;
+			this->_nil->parent = temp;
 			return (n);
 		}
 
@@ -190,6 +183,10 @@ namespace ft
 			if (originalColor == BLACK)
 				_fixErase(x);
 			this->_size--;
+			node *temp = this->_root;
+			while (temp->right != this->_nil)
+				temp = temp->right;
+			this->_nil->parent = temp;
 			return (1);
 		}
 
@@ -209,20 +206,30 @@ namespace ft
 		}
 
 		//for iterators
-		iter begin(void) const
+		RBT_Iterator<node, RBT> begin(void)
 		{
 			iter temp = this->_root;
 			while (temp != this->_nil && temp->left != this->_nil)
 				temp = temp->left;
-			return (temp);
+			return (RBT_Iterator<node, RBT>(temp, this->_nil));
 		}
 
-		iter rbegin(void) const
+		const_RBT_Iterator<node, RBT> cbegin(void) const
 		{
 			iter temp = this->_root;
-			while (temp != this->_nil && temp->right != this->_nil)
-				temp = temp->right;
-			return (temp);
+			while (temp != this->_nil && temp->left != this->_nil)
+				temp = temp->left;
+			return (const_RBT_Iterator<node, RBT>(temp, this->_nil));
+		}
+
+		RBT_Iterator<node, RBT> end(void)
+		{
+			return (RBT_Iterator<node, RBT>(this->_nil, this->_nil));
+		}
+
+		const_RBT_Iterator<node, RBT> end(void) const
+		{
+			return (const_RBT_Iterator<node, RBT>(this->_nil, this->_nil));
 		}
 
 		size_type max_size(void) const
