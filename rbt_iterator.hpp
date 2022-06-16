@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/12 23:22:32 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/06/15 18:59:28 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/06/16 16:17:31 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ namespace ft
 		{
 			this->_ptr = copy._ptr;
 			this->_nil = copy._nil;
+			this->_prev = copy._prev;
 			return (*this);
 		}
 
@@ -52,12 +53,12 @@ namespace ft
 			return (this->_ptr);
 		}
 
-		reference operator*(void)
+		reference operator*(void) const
 		{
 			return (*(this->_ptr->data));
 		}
 
-		pointer operator->(void)
+		pointer operator->(void) const
 		{
 			return (&(this->operator*()));
 		}
@@ -67,7 +68,9 @@ namespace ft
 		RBT_Iterator &operator++(void)
 		{
 			T *temp = this->_ptr;
-			if (temp->right != this->_nil)
+			if (temp == nullptr)
+				temp = this->_prev;
+			else if (temp->right != this->_nil)
 			{
 				temp = temp->right;
 				while (temp->left != this->_nil)
@@ -81,9 +84,10 @@ namespace ft
 					temp = temp->parent;
 				if (temp->parent)
 					temp = temp->parent;
-				else 
-					temp = this->_nil->parent;
+				else
+					temp = this->_nil;
 			}
+			this->_prev = this->_ptr;
 			this->_ptr = temp;
 			return (*this);
 		}
@@ -98,11 +102,17 @@ namespace ft
 		RBT_Iterator &operator--(void)
 		{
 			T *temp = this->_ptr;
-			if (temp->left != this->_nil)
+			if (!temp->parent && temp->left == this->_nil)
+				temp = temp->parent;
+			else if (temp == this->_nil)
+				temp = this->_nil->parent;
+			else if (temp->left != this->_nil && temp->left)
 			{
 				temp = temp->left;
 				while (temp->right != this->_nil)
+				{
 					temp = temp->right;
+				}
 			}
 			else if (temp->parent && temp == temp->parent->right)
 				temp = temp->parent;
@@ -113,10 +123,11 @@ namespace ft
 				if (temp->parent)
 					temp = temp->parent;
 				else 
-					temp = this->_nil->parent;
+					temp = nullptr;
 			}
 			else
 				temp = this->_nil->parent;
+			this->_prev = this->_ptr;
 			this->_ptr = temp;
 			return (*this);
 		}
@@ -131,6 +142,11 @@ namespace ft
 		T *getNil(void) const
 		{
 			return (this->_nil);
+		}
+
+		T *getPrev(void) const
+		{
+			return (this->_prev);
 		}
 
 		bool operator==(const const_RBT_Iterator<T, Tree> &rhs) const
@@ -157,6 +173,7 @@ namespace ft
 
 		T *_ptr;
 		T *_nil;
+		T *_prev;
 	};
 
 	template <typename T, class Tree>
@@ -188,6 +205,7 @@ namespace ft
 		{
 			this->_ptr = copy._ptr;
 			this->_nil = copy._nil;
+			this->_prev = copy._prev;
 			return (*this);
 		}
 
@@ -195,6 +213,7 @@ namespace ft
 		{
 			this->_ptr = copy.base();
 			this->_nil = copy.getNil();
+			this->_prev = copy.getPrev();
 			return (*this);
 		}
 
@@ -218,7 +237,9 @@ namespace ft
 		const_RBT_Iterator &operator++(void)
 		{
 			T *temp = this->_ptr;
-			if (temp->right != this->_nil)
+			if (temp == nullptr)
+				temp = this->_prev;
+			else if (temp->right != this->_nil)
 			{
 				temp = temp->right;
 				while (temp->left != this->_nil)
@@ -233,8 +254,9 @@ namespace ft
 				if (temp->parent)
 					temp = temp->parent;
 				else 
-					temp = this->_nil->parent;
+					temp = this->_nil;
 			}
+			this->_prev = this->_ptr;
 			this->_ptr = temp;
 			return (*this);
 		}
@@ -249,7 +271,9 @@ namespace ft
 		const_RBT_Iterator &operator--(void)
 		{
 			T *temp = this->_ptr;
-			if (temp->left != this->_nil)
+			if (temp == this->_nil)
+				temp = this->_nil->parent;
+			else if (temp->left != this->_nil)
 			{
 				temp = temp->left;
 				while (temp->right != this->_nil)
@@ -263,11 +287,10 @@ namespace ft
 					temp = temp->parent;
 				if (temp->parent)
 					temp = temp->parent;
-				else 
-					temp = this->_nil->parent;
+				else
+					temp = nullptr;
 			}
-			else
-				temp = this->_nil->parent;
+			this->_prev = this->_ptr;
 			this->_ptr = temp;
 			return (*this);
 		}
@@ -303,6 +326,7 @@ namespace ft
 
 		T *_ptr;
 		T *_nil;
+		T *_prev;
 	};
 }
 

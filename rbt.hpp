@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/12 01:52:17 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/06/15 19:07:53 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/06/16 18:34:34 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,10 @@ namespace ft
 				y->right = n;
 
 			this->_size++;
+			node *temp = this->_root;
+			while (temp->right != this->_nil)
+				temp = temp->right;
+			this->_nil->parent = temp;
 			//if n is the root node, recolor it to black and end
 			if (n->parent == nullptr)
 			{
@@ -124,10 +128,6 @@ namespace ft
 
 			//fix the tree
 			_fixInsert(n);
-			node *temp = this->_root;
-			while (temp->right != this->_nil)
-				temp = temp->right;
-			this->_nil->parent = temp;
 			return (n);
 		}
 
@@ -139,7 +139,7 @@ namespace ft
 
 		node *find(const key_type &key) const
 		{
-			return (_findHelper(key, nullptr));
+			return (_findHelper(key));
 		}
 
 		size_type erase(const key_type &k)
@@ -151,6 +151,14 @@ namespace ft
 
 			if (ptr == this->_nil)
 				return (0);
+			std::cout << "Bruh" << std::endl;
+			this->_size--;
+			if (ptr == this->_root)
+			{
+				_clearNode(ptr);
+				this->_root = this->_nil;
+				return (1);
+			}
 			if (ptr->left == this->_nil)
 			{
 				x = ptr->right;
@@ -182,7 +190,6 @@ namespace ft
 			_clearNode(ptr);
 			if (originalColor == BLACK)
 				_fixErase(x);
-			this->_size--;
 			node *temp = this->_root;
 			while (temp->right != this->_nil)
 				temp = temp->right;
@@ -227,7 +234,7 @@ namespace ft
 			return (RBT_Iterator<node, RBT>(this->_nil, this->_nil));
 		}
 
-		const_RBT_Iterator<node, RBT> end(void) const
+		const_RBT_Iterator<node, RBT> cend(void) const
 		{
 			return (const_RBT_Iterator<node, RBT>(this->_nil, this->_nil));
 		}
@@ -240,6 +247,11 @@ namespace ft
 		iter getNil(void) const
 		{
 			return (this->_nil);
+		}
+
+		void setSize(size_type s)
+		{
+			this->_size = s;
 		}
 
 	private:
@@ -350,33 +362,25 @@ namespace ft
 			this->_root->color = BLACK;
 		}
 
-		node *_findHelper(const key_type &key, node *ptr) const
+		node *_findHelper(const key_type &key) const
 		{
-			node *n = this->_nil;
+			node *n = this->_root;
 
-			if (this->_root == this->_nil)
-				return (nullptr);
-			if (ptr == nullptr)
-				ptr = this->_root;
-			if (ptr->data->first == key)
-				return (ptr);
-			if (!_hasChildren(ptr))
-				return (this->_nil);
-			if (this->_comp(key, ptr->data->first) && ptr->left == this->_nil)
-				return (this->_nil);
-			else if (this->_comp(key, ptr->data->first))
-				n = _findHelper(key, ptr->left);
-			if (this->_comp(ptr->data->first, key) && ptr->right == this->_nil)
-				return (this->_nil);
-			else if (this->_comp(ptr->data->first, key))
-				n = _findHelper(key, ptr->right);
+			while (n != this->_nil)
+			{
+				if (n->data->first == key)
+					break ;
+				if (this->_comp(key, n->data->first))
+					n = n->left;
+				else
+					n = n->right;
+			}
 			return (n);
-
 		}
 
 		bool _hasChildren(node *n) const
 		{
-			if (n->left == nullptr && n->right == nullptr)
+			if (n->left == this->_nil && n->right == this->_nil)
 				return (false);
 			return (true);
 		}

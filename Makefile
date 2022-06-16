@@ -8,20 +8,10 @@ CC		:=	c++
 
 CFLAGS	:=	-Wall -Wextra -Werror -std=c++98
 
-%.o:		%.c
-		${CC} ${CFLAGS} $< -o $@
+test:
+		${CC} ${CFLAGS} ${SRCS} -o ft_test_bin
+		${CC} ${CFLAGS} ${SRCS} -o stl_test_bin -D STD
+		./ft_test_bin >ft_test_file && ./stl_test_bin >stl_test_file
+		diff -y ./ft_test_file ./stl_test_file
 
-all:		${NAME}
-
-${NAME}:	${OBJS}
-		${CC} ${OBJS} -o ${NAME} ${CFLAGS}
-
-clean:
-		rm -f ${OBJS}
-
-fclean:		clean
-		rm -f ${NAME}
-
-re:			fclean all
-
-.PHONY:		all clean fclean re
+.PHONY:		all test
