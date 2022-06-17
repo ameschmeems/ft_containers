@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/30 15:02:47 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/06/14 18:19:00 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/06/17 19:38:54 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,31 +88,38 @@ namespace ft
 		typedef typename ft::iterator_traits<Iterator>::reference reference;
 		typedef typename ft::iterator_traits<Iterator>::iterator_category iterator_category;
 
-		reverse_iterator(void) : _element(nullptr) {}
-		explicit reverse_iterator(iterator_type it) : _element(it.base()) {}
+		reverse_iterator(void) : _it() {}
+		explicit reverse_iterator(iterator_type it) : _it(it) {}
 		template <class Iter>
 			reverse_iterator(const reverse_iterator<Iter> &rev_it)
-				: _element(rev_it.base()) {}
+				: _it(rev_it.base()) {}
 		virtual ~reverse_iterator(void) {}
+
+		reverse_iterator &operator=(const reverse_iterator &rhs)
+		{
+			this->_it = rhs._it;
+			return (*this);
+		}
 
 		iterator_type base(void) const
 		{
-			return (this->_element);
+			return (this->_it);
 		}
 
 		reference operator*(void) const
 		{
-			iterator_type temp = this->_element;
+			iterator_type temp = this->_it;
 			temp--;
 			return (*temp);
 		}
+
 		reverse_iterator operator+(difference_type n) const
 		{
-			return (reverse_iterator(this->_element - n));
+			return (reverse_iterator(this->_it - n));
 		}
 		reverse_iterator &operator++(void)
 		{
-			this->_element--;
+			this->_it--;
 			return (*this);
 		}
 		reverse_iterator operator++(int)
@@ -128,11 +135,11 @@ namespace ft
 		}
 		reverse_iterator operator-(difference_type n) const
 		{
-			return (reverse_iterator(this->_element + n));
+			return (reverse_iterator(this->_it + n));
 		}
 		reverse_iterator &operator--(void)
 		{
-			this->_element++;
+			this->_it++;
 			return (*this);
 		}
 		reverse_iterator operator--(int)
@@ -157,7 +164,7 @@ namespace ft
 
 	private:
 
-		pointer _element;
+		iterator_type _it;
 	};
 	//non-member overloads for reverse_iterator
 	template <class Iterator>

@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/12 01:52:17 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/06/16 18:34:34 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/06/17 16:17:05 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ namespace ft
 			bool color;
 		};
 
-		explicit RBT(const key_compare &comp = key_compare(),
+		RBT(const key_compare &comp = key_compare(),
 					const allocator_type &alloc = allocator_type())
 			: _size(0), _comp(comp), _alloc(alloc)
 		{
@@ -65,7 +65,15 @@ namespace ft
 			this->_root = this->_nil;
 		}
 
-		~RBT(void) {}
+		~RBT(void)
+		{
+			// this->_node_alloc.deallocate(this->_nil, 1);
+		}
+
+		void deallocNil(void)
+		{
+			this->_node_alloc.deallocate(this->_nil, 1);
+		}
 
 		size_type size(void) const
 		{
@@ -151,9 +159,8 @@ namespace ft
 
 			if (ptr == this->_nil)
 				return (0);
-			std::cout << "Bruh" << std::endl;
 			this->_size--;
-			if (ptr == this->_root)
+			if (ptr == this->_root && this->_hasChildren(ptr) == false)
 			{
 				_clearNode(ptr);
 				this->_root = this->_nil;
@@ -249,21 +256,23 @@ namespace ft
 			return (this->_nil);
 		}
 
-		void setSize(size_type s)
+		RBT(const RBT &copy)
 		{
-			this->_size = s;
+			*this = copy;
 		}
-
-	private:
-
-		RBT(const RBT &copy) {*this = copy;}
 
 		const RBT &operator=(const RBT &copy)
 		{
 			this->_size = copy._size;
 			this->_root = copy._root;
+			this->_nil = copy._nil;
+			this->_comp = copy._comp;
+			this->_alloc = copy._alloc;
+			this->_node_alloc = copy._node_alloc;
 			return (*this);
 		}
+
+	private:
 
 		//performs left-rotation on node x
 		void _leftRotate(node *x)

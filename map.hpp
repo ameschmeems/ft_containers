@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/13 13:34:39 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/06/16 18:33:11 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/06/17 18:45:41 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,16 +41,16 @@ namespace ft
 	
 	private:
 
-		typedef RBT<key_type, mapped_type, allocator_type> tree_type;
+		typedef RBT<key_type, mapped_type, allocator_type, key_compare> tree_type;
 
 	public:
 
 		typedef RBT_Iterator <typename tree_type::node, tree_type> iterator;
 		typedef const_RBT_Iterator <typename tree_type::node, tree_type> const_iterator;
 		typedef ft::reverse_iterator<iterator> reverse_iterator;
-		typedef ft::reverse_iterator<const_iterator> const_reverse_iteratator;
+		typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 	
-	class value_compare
+		class value_compare
 		{
 		public:
 
@@ -96,6 +96,7 @@ namespace ft
 		~map(void)
 		{
 			this->clear();
+			this->_tree.deallocNil();
 		}
 
 		map &operator=(const map &x)
@@ -128,6 +129,30 @@ namespace ft
 		const_iterator end(void) const
 		{
 			return (this->_tree.cend());
+		}
+
+		reverse_iterator rbegin(void)
+		{
+			reverse_iterator temp(this->end());
+			return (temp);
+		}
+
+		const_reverse_iterator rbegin(void) const
+		{
+			const_reverse_iterator temp(this->end());
+			return (temp);
+		}
+
+		reverse_iterator rend(void)
+		{
+			reverse_iterator temp(this->begin());
+			return (temp);
+		}
+
+		const_reverse_iterator rend(void) const
+		{
+			const_reverse_iterator temp(this->begin());
+			return (temp);
 		}
 
 		bool empty(void) const
@@ -205,11 +230,9 @@ namespace ft
 
 		void swap(map &x)
 		{
-			map<key_type, mapped_type, key_compare, allocator_type> temp(x);
-			x.clear();
-			x = *this;
-			this->clear();
-			*this = temp;
+			tree_type temp = x._tree;
+			x._tree = this->_tree;
+			this->_tree = temp;
 		}
 
 		void clear(void)
@@ -220,7 +243,6 @@ namespace ft
 				this->erase(first);
 				first = this->begin();
 			}
-			// this->_tree.setSize(0);
 		}
 
 		key_compare key_comp(void) const
@@ -245,7 +267,7 @@ namespace ft
 
 		size_type count(const key_type &key) const
 		{
-			if (this->_tree.find(key) != this->getNil())
+			if (this->_tree.find(key) != this->_tree.getNil())
 				return (1);
 			return (0);
 		}

@@ -14,4 +14,12 @@ test:
 		./ft_test_bin >ft_test_file && ./stl_test_bin >stl_test_file
 		diff -y ./ft_test_file ./stl_test_file
 
-.PHONY:		all test
+valgrind:
+		${CC} ${CFLAGS} ${SRCS} -o ft_test_bin
+		valgrind --leak-check=full ./ft_test_bin
+
+leaks:
+		${CC} ${CFLAGS} ${SRCS} -o ft_test_bin
+		leaks -atExit -- ./ft_test_bin
+
+.PHONY:		all test valgrind leaks

@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/12 23:22:32 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/06/16 16:17:31 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/06/17 17:56:32 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,14 @@ namespace ft
 		typedef typename ft::iterator<ft::bidirectional_iterator_tag, value_type>::pointer pointer;
 		typedef typename ft::iterator<ft::bidirectional_iterator_tag, value_type>::reference reference;
 
-		RBT_Iterator(T *nil = nullptr) : _ptr(), _nil(nil) {}
+		RBT_Iterator(T *ptr = nullptr) : _ptr(ptr), _nil(ptr)
+		{
+			if (ptr)
+			{
+				while (this->_nil->left)
+					this->_nil = this->_nil->left;
+			}
+		}
 
 		RBT_Iterator(T *ptr,T *nil) : _ptr(ptr), _nil(nil) {}
 
@@ -63,8 +70,6 @@ namespace ft
 			return (&(this->operator*()));
 		}
 
-		//not sure what to do when iterator reaches the end
-
 		RBT_Iterator &operator++(void)
 		{
 			T *temp = this->_ptr;
@@ -87,6 +92,8 @@ namespace ft
 				else
 					temp = this->_nil;
 			}
+			else
+				temp = this->_nil;
 			this->_prev = this->_ptr;
 			this->_ptr = temp;
 			return (*this);
@@ -256,6 +263,8 @@ namespace ft
 				else 
 					temp = this->_nil;
 			}
+			else
+				temp = this->_nil;
 			this->_prev = this->_ptr;
 			this->_ptr = temp;
 			return (*this);
