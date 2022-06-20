@@ -5,3 +5,5 @@ stl_test_file
 containers_test
 *.dSYM
 a.out
+mine
+stl

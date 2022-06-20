@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/18 01:21:19 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/06/18 01:21:19 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/06/20 12:53:24 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,11 @@ namespace ft
 
 	private:
 
-		typedef RBT_Set<key_type, key_type, allocator_type, key_compare, key_type> tree_type;
+		typedef RBT_Set<key_type, key_type, allocator_type, key_compare> tree_type;
 
 	public:
 
-		typedef RBT_Iterator<typename tree_type::node, tree_type> iterator;
+		typedef const_RBT_Iterator<typename tree_type::node, tree_type> iterator;
 		typedef const_RBT_Iterator<typename tree_type::node, tree_type> const_iterator;
 		typedef ft::reverse_iterator<iterator> reverse_iterator;
 		typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
@@ -51,7 +51,7 @@ namespace ft
 					const allocator_type &alloc = allocator_type()) : _tree(comp, alloc) {}
 
 		template <class InputIterator>
-		set(InputIterator first, InputIterator last, const key_compare &comp = key_compare() \
+		set(InputIterator first, InputIterator last, const key_compare &comp = key_compare(), \
 			const allocator_type &alloc = allocator_type(), \
 			typename enable_if<!is_integral<InputIterator>::value>::type* = nullptr) : _tree(comp, alloc)
 		{
@@ -73,7 +73,7 @@ namespace ft
 			this->_tree.deallocNil();
 		}
 
-		set &operator=(const map &x)
+		set &operator=(const set &x)
 		{
 			this->clear();
 			const_iterator first = x.begin();
@@ -222,10 +222,10 @@ namespace ft
 
 		iterator find(const value_type &val) const
 		{
-			return (iterator(this->_tree.insert(val), this->_tree.getNil()));
+			return (iterator(this->_tree.find(val), this->_tree.getNil()));
 		}
 
-		size_type count(const value_type &val)
+		size_type count(const value_type &val) const
 		{
 			if (this->_tree.find(val) != this->_tree.getNil())
 				return (1);
@@ -235,7 +235,7 @@ namespace ft
 		iterator lower_bound(const value_type &val) const
 		{
 			iterator it = this->begin();
-			while (it != this->end() && (this->_tree.get_comp())((*it), key))
+			while (it != this->end() && (this->_tree.get_comp())((*it), val))
 				it++;
 			return (it);
 		}
@@ -243,7 +243,7 @@ namespace ft
 		iterator upper_bound(const value_type &val) const
 		{
 			iterator it = this->begin();
-			while (it != this->end() && !((this->_tree.get_comp())(key, (*it))))
+			while (it != this->end() && !((this->_tree.get_comp())(val, (*it))))
 				it++;
 			return (it);
 		}

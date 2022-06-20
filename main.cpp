@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/29 11:53:32 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/06/17 20:09:25 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/06/20 14:03:51 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,18 @@
 # include <map>
 # include <vector>
 # include <stack>
+# include <set>
 namespace ft = std;
 #else
 # include "map.hpp"
 # include "vector.hpp"
 # include "stack.hpp"
+# include "set.hpp"
 #endif
 
 #include <iostream>
+#include <list>
+#include <deque>
 
 int main(void)
 {
@@ -32,7 +36,7 @@ int main(void)
 	#ifdef STD
 		std::cout << "#------------------------ STL ------------------------#" << std::endl;
 	#else
-		std::cout << "#------------------------ FT  -----------------------#" << std::endl;
+		std::cout << "#------------------------ FT  ------------------------#" << std::endl;
 	#endif
 		std::cout << "#######################################################" << std::endl << std::endl;
 		ft::map<int, std::string> mp;
@@ -339,6 +343,150 @@ int main(void)
 		vec.swap(ve);
 		std::cout << "New vector after swapping with old vector\niterated with old iterator to make sure its valid" << std::endl;
 		for (; it != ve.end(); it++)
+			std::cout << " - " << *it << std::endl << std::endl;
+	}
+	{
+		std::cout << "#######################################################" << std::endl;
+		std::cout << "#----------------------- STACK -----------------------#" << std::endl;
+	#ifdef STD
+		std::cout << "#------------------------ STL ------------------------#" << std::endl;
+	#else
+		std::cout << "#------------------------ FT  ------------------------#" << std::endl;
+	#endif
+		std::cout << "#######################################################" << std::endl << std::endl;
+
+		ft::stack<int> vst;
+		std::cout << "Is new stack empty:" << std::endl;
+		std::cout << " - " << vst.empty() << std::endl;
+		std::cout << "Stack size:" << std::endl;
+		std::cout << " - " << vst.size() << std::endl;
+		vst.push(21);
+		vst.push(123);
+		vst.push(42);
+		std::cout << "Top after pushing some elements:" << std::endl;
+		std::cout << " - " << vst.top() << std::endl;
+		std::cout << "Is stack empty:" << std::endl;
+		std::cout << " - " << vst.empty() << std::endl;
+		std::cout << "Stack size:" << std::endl;
+		std::cout << " - " << vst.size() << std::endl;
+		vst.pop();
+		std::cout << "Top after popping an element:" << std::endl;
+		std::cout << " - " << vst.top() << std::endl;
+		std::cout << "Is stack empty:" << std::endl;
+		std::cout << " - " << vst.empty() << std::endl;
+		std::cout << "Stack size:" << std::endl;
+		std::cout << " - " << vst.size() << std::endl;
+		vst.pop();
+		std::cout << "Top after popping an element:" << std::endl;
+		std::cout << " - " << vst.top() << std::endl;
+		std::cout << "Is stack empty:" << std::endl;
+		std::cout << " - " << vst.empty() << std::endl;
+		std::cout << "Stack size:" << std::endl;
+		std::cout << " - " << vst.size() << std::endl;
+		vst.pop();
+		std::cout << "Size after popping last element:" << std::endl;
+		std::cout << " - " << vst.size() << std::endl;
+		std::cout << "Is stack empty:" << std::endl;
+		std::cout << " - " << vst.empty() << std::endl << std::endl;;
+		ft::stack<int, std::list<int> > lst;
+		std::cout << "Stack using std::list as underlying container" << std::endl;
+		std::cout << "Is new stack empty:" << std::endl;
+		std::cout << " - " << lst.empty() << std::endl;
+		std::cout << "Stack size:" << std::endl;
+		std::cout << " - " << lst.size() << std::endl;
+		lst.push(1);
+		lst.push(2);
+		lst.push(3);
+		std::cout << "Top after pushing some elements:" << std::endl;
+		std::cout << " - " << lst.top() << std::endl;
+		std::cout << "Is stack empty:" << std::endl;
+		std::cout << " - " << lst.empty() << std::endl;
+		std::cout << "Stack size:" << std::endl;
+		std::cout << " - " << lst.size() << std::endl;
+		lst.pop();
+		std::cout << "Top after popping an element:" << std::endl;
+		std::cout << " - " << lst.top() << std::endl;
+		std::cout << "Is stack empty:" << std::endl;
+		std::cout << " - " << lst.empty() << std::endl;
+		std::cout << "Stack size:" << std::endl;
+		std::cout << " - " << lst.size() << std::endl;
+		lst.pop();
+		std::cout << "Top after popping an element:" << std::endl;
+		std::cout << " - " << lst.top() << std::endl;
+		std::cout << "Is stack empty:" << std::endl;
+		std::cout << " - " << lst.empty() << std::endl;
+		std::cout << "Stack size:" << std::endl;
+		std::cout << " - " << lst.size() << std::endl;
+		lst.pop();
+		std::cout << "Size after popping last element:" << std::endl;
+		std::cout << " - " << lst.size() << std::endl;
+		std::cout << "Is stack empty:" << std::endl;
+		std::cout << " - " << lst.empty() << std::endl << std::endl;
+		ft::stack<int, std::deque<int> > dst;
+		std::cout << "Stack using std::deque as underlying container" << std::endl;
+		std::cout << "Is new stack empty:" << std::endl;
+		std::cout << " - " << dst.empty() << std::endl;
+		std::cout << "Stack size:" << std::endl;
+		std::cout << " - " << dst.size() << std::endl;
+		dst.push(1);
+		dst.push(2);
+		dst.push(3);
+		std::cout << "Top after pushing some elements:" << std::endl;
+		std::cout << " - " << dst.top() << std::endl;
+		std::cout << "Is stack empty:" << std::endl;
+		std::cout << " - " << dst.empty() << std::endl;
+		std::cout << "Stack size:" << std::endl;
+		std::cout << " - " << dst.size() << std::endl;
+		dst.pop();
+		std::cout << "Top after popping an element:" << std::endl;
+		std::cout << " - " << dst.top() << std::endl;
+		std::cout << "Is stack empty:" << std::endl;
+		std::cout << " - " << dst.empty() << std::endl;
+		std::cout << "Stack size:" << std::endl;
+		std::cout << " - " << dst.size() << std::endl;
+		dst.pop();
+		std::cout << "Top after popping an element:" << std::endl;
+		std::cout << " - " << dst.top() << std::endl;
+		std::cout << "Is stack empty:" << std::endl;
+		std::cout << " - " << dst.empty() << std::endl;
+		std::cout << "Stack size:" << std::endl;
+		std::cout << " - " << dst.size() << std::endl;
+		dst.pop();
+		std::cout << "Size after popping last element:" << std::endl;
+		std::cout << " - " << dst.size() << std::endl;
+		std::cout << "Is stack empty:" << std::endl;
+		std::cout << " - " << dst.empty() << std::endl << std::endl;
+	}
+	{
+		std::cout << "#######################################################" << std::endl;
+		std::cout << "#------------------------ SET ------------------------#" << std::endl;
+	#ifdef STD
+		std::cout << "#------------------------ STL ------------------------#" << std::endl;
+	#else
+		std::cout << "#------------------------ FT  ------------------------#" << std::endl;
+	#endif
+		std::cout << "#######################################################" << std::endl << std::endl;
+		ft::set<int> s;
+		s.insert(42);
+		s.insert(21);
+		s.insert(321);
+		ft::set<int>::iterator it = s.begin();
+		std::cout << "Iterating through set, after inserting 3 elements:" << std::endl;
+		for (; it != s.end(); it++)
 			std::cout << " - " << *it << std::endl;
+		std::cout << "Set size:" << std::endl;
+		std::cout << " - " << s.size() << std::endl;
+		std::cout << "Is set empty:" << std::endl;
+		std::cout << " - " << s.empty() << std::endl;
+		std::cout << "Set max_size:" << std::endl;
+		std::cout << " - " << s.max_size() << std::endl;
+		s.erase(s.begin());
+		std::cout << "Set after erasing first element:" << std::endl;
+		for (it = s.begin(); it != s.end(); it++)
+			std::cout << " - " << *it << std::endl;
+		std::cout << "Set size:" << std::endl;
+		std::cout << " - " << s.size() << std::endl;
+		std::cout << "Is set empty:" << std::endl;
+		std::cout << " - " << s.empty() << std::endl;
 	}
 }

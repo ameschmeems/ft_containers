@@ -6,7 +6,7 @@
 /*   By: kpucylo <kpucylo@student.42wolfsburg.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/12 01:52:17 by kpucylo           #+#    #+#             */
-/*   Updated: 2022/06/17 16:17:05 by kpucylo          ###   ########.fr       */
+/*   Updated: 2022/06/20 12:19:12 by kpucylo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -542,7 +542,7 @@ namespace ft
 			bool color;
 		};
 
-		RBT(const key_compare &comp = key_compare(),
+		RBT_Set(const key_compare &comp = key_compare(),
 					const allocator_type &alloc = allocator_type())
 			: _size(0), _comp(comp), _alloc(alloc)
 		{
@@ -553,7 +553,7 @@ namespace ft
 			this->_root = this->_nil;
 		}
 
-		~RBT(void)
+		~RBT_Set(void)
 		{
 			// this->_node_alloc.deallocate(this->_nil, 1);
 		}
@@ -708,30 +708,30 @@ namespace ft
 		}
 
 		//for iterators
-		RBT_Iterator<node, RBT> begin(void)
+		RBT_Iterator<node, RBT_Set> begin(void)
 		{
 			iter temp = this->_root;
 			while (temp != this->_nil && temp->left != this->_nil)
 				temp = temp->left;
-			return (RBT_Iterator<node, RBT>(temp, this->_nil));
+			return (RBT_Iterator<node, RBT_Set>(temp, this->_nil));
 		}
 
-		const_RBT_Iterator<node, RBT> cbegin(void) const
+		const_RBT_Iterator<node, RBT_Set> cbegin(void) const
 		{
 			iter temp = this->_root;
 			while (temp != this->_nil && temp->left != this->_nil)
 				temp = temp->left;
-			return (const_RBT_Iterator<node, RBT>(temp, this->_nil));
+			return (const_RBT_Iterator<node, RBT_Set>(temp, this->_nil));
 		}
 
-		RBT_Iterator<node, RBT> end(void)
+		RBT_Iterator<node, RBT_Set> end(void)
 		{
-			return (RBT_Iterator<node, RBT>(this->_nil, this->_nil));
+			return (RBT_Iterator<node, RBT_Set>(this->_nil, this->_nil));
 		}
 
-		const_RBT_Iterator<node, RBT> cend(void) const
+		const_RBT_Iterator<node, RBT_Set> cend(void) const
 		{
-			return (const_RBT_Iterator<node, RBT>(this->_nil, this->_nil));
+			return (const_RBT_Iterator<node, RBT_Set>(this->_nil, this->_nil));
 		}
 
 		size_type max_size(void) const
@@ -744,12 +744,12 @@ namespace ft
 			return (this->_nil);
 		}
 
-		RBT(const RBT &copy)
+		RBT_Set(const RBT_Set &copy)
 		{
 			*this = copy;
 		}
 
-		const RBT &operator=(const RBT &copy)
+		const RBT_Set &operator=(const RBT_Set &copy)
 		{
 			this->_size = copy._size;
 			this->_root = copy._root;
